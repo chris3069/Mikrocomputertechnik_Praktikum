@@ -1,0 +1,17 @@
+ Welche I/O-Register werden durch die Typdefinition GPIO_TypeDef abgebildet?
+
+GPIOB und GPIOC
+
+ Welchen Wert hat die Konstante GPIOB_BASE?
+
+GPIO-Base hat den Wert der Adresse: 0x400UL+0x40000000UL+0x00020000UL = 0x40020400UL
+
+ Welche Bedeutung erhält GPIOB durch die Anweisung #define GPIOB ((GPIO_TypeDef *) GPIOB_BASE)?
+
+GPIOB ist ein Zeiger des Typs Typedef Struct auf die Adresse von GPIOB_Base
+
+ Was passiert bei dieser C-Anweisung GPIOB->MODER = 0x5555 ?
+
+GPIOB wird als Augsgang gesetzt 
+
+

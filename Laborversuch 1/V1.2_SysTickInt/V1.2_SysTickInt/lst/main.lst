@@ -1,0 +1,273 @@
+
+
+
+ARM Macro Assembler    Page 1 
+
+
+    1 00000000         ;-------------------------------------------------------
+                       ---------------------
+    2 00000000         ; MCT-Praktikumsversuch V1.2 Nucleo
+    3 00000000         ; mit Lauflicht/SysTick in Assembler
+    4 00000000         ; 
+    5 00000000         ; 06/2020
+    6 00000000         ; ------------------------------------------------------
+                       ----------------------*/
+    7 00000000         
+    8 00000000 00000014 
+                       ODR     EQU              0x14        ; Offset Output Dat
+                                                            a Register
+    9 00000000 00000004 
+                       LOAD    EQU              0x04        ; Offset Load-Wert
+   10 00000000 00000010 
+                       IDR     EQU              0x10        ; Offset Input Data
+                                                             Register
+   11 00000000 40020800 
+                       GPIOC   EQU              0x40020800  ; Adresse des GPIO-
+                                                            Ports C
+   12 00000000 E000E010 
+                       SYSTICK EQU              0xe000e010  ; Adresse des SysTi
+                                                            ck-Timers 
+   13 00000000         
+   14 00000000         
+   15 00000000         
+   16 00000000         
+   17 00000000                 THUMB
+   18 00000000                 AREA             myCode, CODE
+   19 00000000                 IMPORT           Init_GPIO
+   20 00000000                 IMPORT           Init_SysTick
+   21 00000000                 IMPORT           SCB_SHPR3
+   22 00000000                 IMPORT           GPIOB
+   23 00000000         ;   IMPORT GPIOC 
+   24 00000000         ;   IMPORT LOAD
+   25 00000000         ;   IMPORT IDR
+   26 00000000         ;   IMPORT SYSTICK
+   27 00000000         
+   28 00000000         
+   29 00000000         
+   30 00000000                 EXPORT           Start
+   31 00000000                 EXPORT           SysTick_Handler
+   32 00000000         
+   33 00000000         Start   PROC
+   34 00000000         
+   35 00000000         ; I/O initialisieren
+   36 00000000 F7FF FFFE       bl               Init_GPIO
+   37 00000004 4B10            ldr              r3, = GPIOB ; LED0 setzen
+   38 00000006 F04F 0001       mov              r0, #0x01
+   39 0000000A 6158            str              r0,[r3,#ODR]
+   40 0000000C         
+   41 0000000C F7FF FFFE       bl               Init_SysTick
+   42 00000010         
+   43 00000010         FOREVER
+   44 00000010 E7FE            b                FOREVER     ; nix
+   45 00000012         
+   46 00000012         
+   47 00000012         ;-------------------------------------------------------
+                       ----------------
+
+
+
+ARM Macro Assembler    Page 2 
+
+
+   48 00000012         SysTick_Handler
+   49 00000012         
+   50 00000012         ;push {r0,lr}   ; wird automatisch gerettet
+   51 00000012 6958            ldr              r0,[r3,#ODR] ; Status LED einle
+                                                            sen
+   52 00000014 2880            cmp              r0,#0x80
+   53 00000016 D002            beq              INIT
+   54 00000018 EA4F 0040 
+                       SHIFT   lsl              r0,r0,#1
+   55 0000001C E002            b                OUT
+   56 0000001E F04F 0001 
+                       INIT    mov              r0,#0x01
+   57 00000022 E7FF            b                OUT
+   58 00000024 6158    OUT     str              r0,[r3,#ODR] ; LED ausgeben
+   59 00000026         ;pop {r0,lr}   ; wird automatisch zurueckgelesen
+   60 00000026         
+   61 00000026         
+   62 00000026         
+   63 00000026         
+   64 00000026         ;Taster zuerst einlesen, ausmaskieren, da Pegel HIGH sin
+                       d, mit XOR umdrehen
+   65 00000026 4C09            ldr              r4, = GPIOC ; GPIO Input initia
+                                                            lisieren Port C 0..
+                                                            .7
+   66 00000028 6927            ldr              r7, [r4, #IDR]
+   67 0000002A F64F 78FF       mov              r8, #0xFFFF
+   68 0000002E EA87 0708       eor              r7, r7, r8
+   69 00000032 463E            mov              r6, r7
+   70 00000034 F006 0603       and              r6, #0x3    ;nur die Taster 1-2
+                                                             werden angeguckt
+   71 00000038         ;LOAD SYSTICK TIMER
+   72 00000038 4905            ldr              r1, = SYSTICK ; Timer init
+   73 0000003A F24B 731B       ldr              r3, =46875
+   74 0000003E FA03 F306       lsl              r3, r6
+   75 00000042 604B            str              r3, [r1, #LOAD]
+   76 00000044 4770            bx               lr
+   77 00000046         ;-------------------------------------------------------
+                       ----------------  
+   78 00000046                 ENDP
+   79 00000046                 END
+              00 00 00000000 
+              40020800 
+              E000E010 
+Command Line: --debug --xref --diag_suppress=9931 --cpu=Cortex-M4.fp.sp --apcs=
+interwork --depend=.\obj\main.d -o.\obj\main.o -I.\RTE\_V1.1_Lauflicht -IC:\Use
+rs\Christian\AppData\Local\Arm\Packs\Keil\STM32F4xx_DFP\2.14.0\Drivers\CMSIS\De
+vice\ST\STM32F4xx\Include -IC:\Keil_v5\ARM\CMSIS\Include --predefine="__EVAL SE
+TA 1" --predefine="__UVISION_VERSION SETA 529" --predefine="STM32F446xx SETA 1"
+ --list=.\lst\main.lst main.s
+
+
+
+ARM Macro Assembler    Page 1 Alphabetic symbol ordering
+Relocatable symbols
+
+FOREVER 00000010
+
+Symbol: FOREVER
+   Definitions
+      At line 43 in file main.s
+   Uses
+      At line 44 in file main.s
+Comment: FOREVER used once
+INIT 0000001E
+
+Symbol: INIT
+   Definitions
+      At line 56 in file main.s
+   Uses
+      At line 53 in file main.s
+Comment: INIT used once
+OUT 00000024
+
+Symbol: OUT
+   Definitions
+      At line 58 in file main.s
+   Uses
+      At line 55 in file main.s
+      At line 57 in file main.s
+
+SHIFT 00000018
+
+Symbol: SHIFT
+   Definitions
+      At line 54 in file main.s
+   Uses
+      None
+Comment: SHIFT unused
+Start 00000000
+
+Symbol: Start
+   Definitions
+      At line 33 in file main.s
+   Uses
+      At line 30 in file main.s
+Comment: Start used once
+SysTick_Handler 00000012
+
+Symbol: SysTick_Handler
+   Definitions
+      At line 48 in file main.s
+   Uses
+      At line 31 in file main.s
+Comment: SysTick_Handler used once
+myCode 00000000
+
+Symbol: myCode
+   Definitions
+      At line 18 in file main.s
+   Uses
+      None
+Comment: myCode unused
+7 symbols
+
+
+
+ARM Macro Assembler    Page 1 Alphabetic symbol ordering
+Absolute symbols
+
+GPIOC 40020800
+
+Symbol: GPIOC
+   Definitions
+      At line 11 in file main.s
+   Uses
+      At line 65 in file main.s
+Comment: GPIOC used once
+IDR 00000010
+
+Symbol: IDR
+   Definitions
+      At line 10 in file main.s
+   Uses
+      At line 66 in file main.s
+Comment: IDR used once
+LOAD 00000004
+
+Symbol: LOAD
+   Definitions
+      At line 9 in file main.s
+   Uses
+      At line 75 in file main.s
+Comment: LOAD used once
+ODR 00000014
+
+Symbol: ODR
+   Definitions
+      At line 8 in file main.s
+   Uses
+      At line 39 in file main.s
+      At line 51 in file main.s
+      At line 58 in file main.s
+
+SYSTICK E000E010
+
+Symbol: SYSTICK
+   Definitions
+      At line 12 in file main.s
+   Uses
+      At line 72 in file main.s
+Comment: SYSTICK used once
+5 symbols
+
+
+
+ARM Macro Assembler    Page 1 Alphabetic symbol ordering
+External symbols
+
+GPIOB 00000000
+
+Symbol: GPIOB
+   Definitions
+      At line 22 in file main.s
+   Uses
+      At line 37 in file main.s
+Comment: GPIOB used once
+Init_GPIO 00000000
+
+Symbol: Init_GPIO
+   Definitions
+      At line 19 in file main.s
+   Uses
+      At line 36 in file main.s
+Comment: Init_GPIO used once
+Init_SysTick 00000000
+
+Symbol: Init_SysTick
+   Definitions
+      At line 20 in file main.s
+   Uses
+      At line 41 in file main.s
+Comment: Init_SysTick used once
+SCB_SHPR3 00000000
+
+Symbol: SCB_SHPR3
+   Definitions
+      At line 21 in file main.s
+   Uses
+      None
+Comment: SCB_SHPR3 unused
+4 symbols
+352 symbols in table

@@ -1,0 +1,243 @@
+
+
+
+ARM Macro Assembler    Page 1 
+
+
+    1 00000000         ; ** Startup Code für Assembler
+    2 00000000         ; ** Haunstetter / 06.2012
+    3 00000000         ; ** STM32F100RB - Value Line Discovery
+    4 00000000         ; **
+    5 00000000         ; ** Bereitet die Vektor Tabelle vor
+    6 00000000         ; ** Verzweigt zu Adresse "Start" in anderem Modul des P
+                       rojekts
+    7 00000000         ; ******************************************************
+                       ***************
+    8 00000000         
+    9 00000000         ;; Jump to Application Entry Point using THUMB Mode Inst
+                       ructions 
+   10 00000000                 THUMB
+   11 00000000                 AREA             init, CODE
+   13 00000000         Reset_Handler
+                               PROC
+   14 00000000                 EXPORT           Reset_Handler
+   15 00000000                 IMPORT           Start
+   16 00000000                 IMPORT           SysTick_Handler
+   17 00000000         
+   18 00000000 F7FF BFFE       b                Start       ; Starts right afte
+                                                            r vectors
+   19 00000004                 ENDP
+   20 00000004         
+   21 00000004         ; Assembler basic configuration  (32-Bit aligned Stack, 
+                       THUMB Instruction Set)
+   22 00000004         ;; Stack Allocation: 1kB after User's Data
+   23 00000004                 AREA             stack, DATA, NOINIT, ALIGN=2
+   24 00000000         Stack   SPACE            0x00000400
+   25 00000400                 EXPORT           Stack
+   26 00000400         __initial_sp
+   27 00000400         
+   28 00000400         ;; Vector Table: is Mapped to Address 0 at Reset
+   29 00000400                 AREA             RESET, DATA, READONLY
+   30 00000000                 EXPORT           __Vectors
+   31 00000000         ;   IMPORT SVC_Handler
+   32 00000000         ;   IMPORT SysTick_Handler
+   33 00000000 00000000 
+                       __Vectors
+                               DCD              __initial_sp ; Top of Stack (ma
+                                                            x. 0x20002000)
+   34 00000004 00000000        DCD              Reset_Handler ; Reset Handler
+   35 00000008 00000000        DCD              NMI_Handler ; NMI Handler
+   36 0000000C 00000000        DCD              HardFault_Handler ; Hard Fault 
+                                                            Handler
+   37 00000010 00000000        DCD              0           ; 7 unused System I
+                                                            nterruts
+   38 00000014 00000000        DCD              0
+   39 00000018 00000000        DCD              0
+   40 0000001C 00000000        DCD              0
+   41 00000020 00000000        DCD              0
+   42 00000024 00000000        DCD              0
+   43 00000028 00000000        DCD              0
+   44 0000002C 00000000        DCD              SVC_Handler ; ** Supervisor Cal
+                                                            l **
+   45 00000030 00000000        DCD              0           ; 3 unused System I
+                                                            nterruts
+   46 00000034 00000000        DCD              0
+   47 00000038 00000000        DCD              0
+
+
+
+ARM Macro Assembler    Page 2 
+
+
+   48 0000003C 00000000        DCD              SysTick_Handler ; ** System Tic
+                                                            k Timer **
+   49 00000040         ;; EXTInt Space Starts Here
+   50 00000040         
+   51 00000040                 AREA             handler, CODE, READONLY
+   53 00000000         Exception_Handler
+                               PROC
+   54 00000000         NMI_Handler
+   55 00000000         HardFault_Handler
+   56 00000000         SVC_Handler
+   57 00000000         ;SysTick_Handler
+   58 00000000 E7FE            B                .           ; All exception han
+                                                            dlers end here
+   59 00000002         ;   B  .
+   60 00000002         ;   B  .
+   61 00000002                 ENDP
+   62 00000002                 END
+Command Line: --debug --xref --diag_suppress=9931 --cpu=Cortex-M4.fp.sp --apcs=
+interwork --depend=.\obj\stm32init.d -o.\obj\stm32init.o -I.\RTE\_V1.1_Lauflich
+t -IC:\Users\Christian\AppData\Local\Arm\Packs\Keil\STM32F4xx_DFP\2.14.0\Driver
+s\CMSIS\Device\ST\STM32F4xx\Include -IC:\Keil_v5\ARM\CMSIS\Include --predefine=
+"__EVAL SETA 1" --predefine="__UVISION_VERSION SETA 529" --predefine="STM32F446
+xx SETA 1" --list=.\lst\stm32init.lst STM32Init.s
+
+
+
+ARM Macro Assembler    Page 1 Alphabetic symbol ordering
+Relocatable symbols
+
+Reset_Handler 00000000
+
+Symbol: Reset_Handler
+   Definitions
+      At line 13 in file STM32Init.s
+   Uses
+      At line 14 in file STM32Init.s
+      At line 34 in file STM32Init.s
+
+init 00000000
+
+Symbol: init
+   Definitions
+      At line 11 in file STM32Init.s
+   Uses
+      None
+Comment: init unused
+2 symbols
+
+
+
+ARM Macro Assembler    Page 1 Alphabetic symbol ordering
+Relocatable symbols
+
+Stack 00000000
+
+Symbol: Stack
+   Definitions
+      At line 24 in file STM32Init.s
+   Uses
+      At line 25 in file STM32Init.s
+Comment: Stack used once
+__initial_sp 00000400
+
+Symbol: __initial_sp
+   Definitions
+      At line 26 in file STM32Init.s
+   Uses
+      At line 33 in file STM32Init.s
+Comment: __initial_sp used once
+stack 00000000
+
+Symbol: stack
+   Definitions
+      At line 23 in file STM32Init.s
+   Uses
+      None
+Comment: stack unused
+3 symbols
+
+
+
+ARM Macro Assembler    Page 1 Alphabetic symbol ordering
+Relocatable symbols
+
+RESET 00000000
+
+Symbol: RESET
+   Definitions
+      At line 29 in file STM32Init.s
+   Uses
+      None
+Comment: RESET unused
+__Vectors 00000000
+
+Symbol: __Vectors
+   Definitions
+      At line 33 in file STM32Init.s
+   Uses
+      At line 30 in file STM32Init.s
+Comment: __Vectors used once
+2 symbols
+
+
+
+ARM Macro Assembler    Page 1 Alphabetic symbol ordering
+Relocatable symbols
+
+Exception_Handler 00000000
+
+Symbol: Exception_Handler
+   Definitions
+      At line 53 in file STM32Init.s
+   Uses
+      None
+Comment: Exception_Handler unused
+HardFault_Handler 00000000
+
+Symbol: HardFault_Handler
+   Definitions
+      At line 55 in file STM32Init.s
+   Uses
+      At line 36 in file STM32Init.s
+Comment: HardFault_Handler used once
+NMI_Handler 00000000
+
+Symbol: NMI_Handler
+   Definitions
+      At line 54 in file STM32Init.s
+   Uses
+      At line 35 in file STM32Init.s
+Comment: NMI_Handler used once
+SVC_Handler 00000000
+
+Symbol: SVC_Handler
+   Definitions
+      At line 56 in file STM32Init.s
+   Uses
+      At line 44 in file STM32Init.s
+Comment: SVC_Handler used once
+handler 00000000
+
+Symbol: handler
+   Definitions
+      At line 51 in file STM32Init.s
+   Uses
+      None
+Comment: handler unused
+5 symbols
+
+
+
+ARM Macro Assembler    Page 1 Alphabetic symbol ordering
+External symbols
+
+Start 00000000
+
+Symbol: Start
+   Definitions
+      At line 15 in file STM32Init.s
+   Uses
+      At line 18 in file STM32Init.s
+Comment: Start used once
+SysTick_Handler 00000000
+
+Symbol: SysTick_Handler
+   Definitions
+      At line 16 in file STM32Init.s
+   Uses
+      At line 48 in file STM32Init.s
+Comment: SysTick_Handler used once
+2 symbols
+348 symbols in table

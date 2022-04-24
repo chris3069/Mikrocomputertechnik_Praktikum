@@ -1,0 +1,348 @@
+
+
+
+ARM Macro Assembler    Page 1 
+
+
+    1 00000000 40023800 
+                       RCC     EQU              0x40023800  ; Adresse des Clock
+                                                             Control Registers
+    2 00000000 00000030 
+                       AHB1ENR EQU              0x30        ;   Offset AHB1 Per
+                                                            ipheral Clock Enabl
+                                                            e Register
+    3 00000000 00000002 
+                       IOPCEN  EQU              0x02        ;   I/O Port C Cloc
+                                                            k Enable
+    4 00000000 00000004 
+                       IOPBEN  EQU              0x04        ; I/O Port B Clock 
+                                                            Enable
+    5 00000000         
+    6 00000000 40020400 
+                       GPIOB   EQU              0x40020400  ; Adresse des GPIO-
+                                                            Ports B
+    7 00000000 40020800 
+                       GPIOC   EQU              0x40020800  ; Adresse des GPIO-
+                                                            Ports C
+    8 00000000 00000000 
+                       MODER   EQU              0x00        ;  Offset Modus
+    9 00000000 00000014 
+                       ODR     EQU              0x14        ; Offset Output Dat
+                                                            a Register
+   10 00000000 00000010 
+                       IDR     EQU              0x10        ; Offset Input Data
+                                                             Register
+   11 00000000         
+   12 00000000 00005555 
+                       LEDEN   EQU              0x5555      ;  Output Mode Push
+                                                            /Pull max speed 50 
+                                                            MHz
+   13 00000000 00000000 
+                       SWITCHEN
+                               EQU              0x0000      ; Floating Input
+   14 00000000         
+   15 00000000 E000E010 
+                       SYSTICK EQU              0xe000e010  ; Adresse des SysTi
+                                                            ck-Timers
+   16 00000000 00000000 
+                       CTRL    EQU              0x00        ; Offset Kontrollre
+                                                            gister
+   17 00000000 00000004 
+                       LOAD    EQU              0x04        ; Offset Load-Wert
+   18 00000000         
+   19 00000000 00000001 
+                       CTRL_RUN
+                               EQU              0x01        ; SysTick Starten
+   20 00000000 00000002 
+                       CTRL_IEN
+                               EQU              0x02        ; Interrupt aktivie
+                                                            ren
+   21 00000000 00000004 
+                       CTRL_SYSCLK
+                               EQU              0x04        ; Taktvorgabe
+   22 00000000         
+   23 00000000 E000ED20 
+                       SCB_SHPR3
+
+
+
+ARM Macro Assembler    Page 2 
+
+
+                               EQU              0xE000ED20  ; System Handler Pr
+                                                            iority Register
+   24 00000000         
+   25 00000000         ; Code memory region
+   26 00000000                 THUMB
+   27 00000000                 AREA             myIO, CODE
+   28 00000000         
+   29 00000000         Start   PROC
+   30 00000000                 EXPORT           Init_GPIO
+   31 00000000                 EXPORT           Init_SysTick
+   32 00000000                 EXPORT           SCB_SHPR3
+   33 00000000                 EXPORT           GPIOB
+   34 00000000         ;----------------------------------------------------
+   35 00000000         Init_GPIO
+   36 00000000 E92D 47FF       push             {r0-r10,lr}
+   37 00000004         
+   38 00000004 4B0D            ldr              r3, = RCC   ; I/O-Clock für Por
+                                                            t B und C initialis
+                                                            ieren
+   39 00000006 F04F 0006       mov              r0,#IOPCEN+IOPBEN
+   40 0000000A 6318            str              r0,[r3,#AHB1ENR]
+   41 0000000C         
+   42 0000000C 4B0C            ldr              r3, = GPIOB ; GPIO Output initi
+                                                            alisieren Port B 0.
+                                                            ..7
+   43 0000000E F245 5055       ldr              r0, = LEDEN
+   44 00000012 6018            str              r0,[r3,#MODER]
+   45 00000014         
+   46 00000014 4C0B            ldr              r4, = GPIOC ; GPIO Input initia
+                                                            lisieren Port C 0..
+                                                            .7
+   47 00000016 F04F 0000       ldr              r0, = SWITCHEN
+   48 0000001A 6020            str              r0,[r4,#MODER]
+   49 0000001C E8BD 47FF       pop              {r0-r10,lr}
+   50 00000020 4770            bx               lr
+   51 00000022         ;----------------------------------------------------
+   52 00000022         Init_SysTick
+   53 00000022 E92D 47FF       push             {r0-r10,lr}
+   54 00000026 4908            ldr              r1, = SYSTICK ; Timer init
+   55 00000028 F24B 731B       ldr              r3, =46875
+   56 0000002C 604B            str              r3, [r1, #LOAD]
+   57 0000002E F04F 0303       mov              r3, #CTRL_RUN+CTRL_IEN
+   58 00000032 600B            str              r3,[r1, #CTRL]
+   59 00000034         
+   60 00000034         
+   61 00000034         ;Taster einlesen
+   62 00000034         
+   63 00000034         
+   64 00000034         
+   65 00000034         ; ...
+   66 00000034         
+   67 00000034 E8BD 47FF       pop              {r0-r10,lr}
+   68 00000038 4770            bx               lr
+   69 0000003A         
+   70 0000003A                 ENDP
+   71 0000003A                 END
+              00 00 40023800 
+              40020400 
+              40020800 
+
+
+
+ARM Macro Assembler    Page 3 
+
+
+              E000E010 
+Command Line: --debug --xref --diag_suppress=9931 --cpu=Cortex-M4.fp.sp --apcs=
+interwork --depend=.\obj\initio.d -o.\obj\initio.o -I.\RTE\_V1.1_Lauflicht -IC:
+\Users\Christian\AppData\Local\Arm\Packs\Keil\STM32F4xx_DFP\2.14.0\Drivers\CMSI
+S\Device\ST\STM32F4xx\Include -IC:\Keil_v5\ARM\CMSIS\Include --predefine="__EVA
+L SETA 1" --predefine="__UVISION_VERSION SETA 529" --predefine="STM32F446xx SET
+A 1" --list=.\lst\initio.lst InitIO.s
+
+
+
+ARM Macro Assembler    Page 1 Alphabetic symbol ordering
+Relocatable symbols
+
+Init_GPIO 00000000
+
+Symbol: Init_GPIO
+   Definitions
+      At line 35 in file InitIO.s
+   Uses
+      At line 30 in file InitIO.s
+Comment: Init_GPIO used once
+Init_SysTick 00000022
+
+Symbol: Init_SysTick
+   Definitions
+      At line 52 in file InitIO.s
+   Uses
+      At line 31 in file InitIO.s
+Comment: Init_SysTick used once
+Start 00000000
+
+Symbol: Start
+   Definitions
+      At line 29 in file InitIO.s
+   Uses
+      None
+Comment: Start unused
+myIO 00000000
+
+Symbol: myIO
+   Definitions
+      At line 27 in file InitIO.s
+   Uses
+      None
+Comment: myIO unused
+4 symbols
+
+
+
+ARM Macro Assembler    Page 1 Alphabetic symbol ordering
+Absolute symbols
+
+AHB1ENR 00000030
+
+Symbol: AHB1ENR
+   Definitions
+      At line 2 in file InitIO.s
+   Uses
+      At line 40 in file InitIO.s
+Comment: AHB1ENR used once
+CTRL 00000000
+
+Symbol: CTRL
+   Definitions
+      At line 16 in file InitIO.s
+   Uses
+      At line 58 in file InitIO.s
+Comment: CTRL used once
+CTRL_IEN 00000002
+
+Symbol: CTRL_IEN
+   Definitions
+      At line 20 in file InitIO.s
+   Uses
+      At line 57 in file InitIO.s
+Comment: CTRL_IEN used once
+CTRL_RUN 00000001
+
+Symbol: CTRL_RUN
+   Definitions
+      At line 19 in file InitIO.s
+   Uses
+      At line 57 in file InitIO.s
+Comment: CTRL_RUN used once
+CTRL_SYSCLK 00000004
+
+Symbol: CTRL_SYSCLK
+   Definitions
+      At line 21 in file InitIO.s
+   Uses
+      None
+Comment: CTRL_SYSCLK unused
+GPIOB 40020400
+
+Symbol: GPIOB
+   Definitions
+      At line 6 in file InitIO.s
+   Uses
+      At line 33 in file InitIO.s
+      At line 42 in file InitIO.s
+
+GPIOC 40020800
+
+Symbol: GPIOC
+   Definitions
+      At line 7 in file InitIO.s
+   Uses
+      At line 46 in file InitIO.s
+Comment: GPIOC used once
+IDR 00000010
+
+
+
+
+ARM Macro Assembler    Page 2 Alphabetic symbol ordering
+Absolute symbols
+
+Symbol: IDR
+   Definitions
+      At line 10 in file InitIO.s
+   Uses
+      None
+Comment: IDR unused
+IOPBEN 00000004
+
+Symbol: IOPBEN
+   Definitions
+      At line 4 in file InitIO.s
+   Uses
+      At line 39 in file InitIO.s
+Comment: IOPBEN used once
+IOPCEN 00000002
+
+Symbol: IOPCEN
+   Definitions
+      At line 3 in file InitIO.s
+   Uses
+      At line 39 in file InitIO.s
+Comment: IOPCEN used once
+LEDEN 00005555
+
+Symbol: LEDEN
+   Definitions
+      At line 12 in file InitIO.s
+   Uses
+      At line 43 in file InitIO.s
+Comment: LEDEN used once
+LOAD 00000004
+
+Symbol: LOAD
+   Definitions
+      At line 17 in file InitIO.s
+   Uses
+      At line 56 in file InitIO.s
+Comment: LOAD used once
+MODER 00000000
+
+Symbol: MODER
+   Definitions
+      At line 8 in file InitIO.s
+   Uses
+      At line 44 in file InitIO.s
+      At line 48 in file InitIO.s
+
+ODR 00000014
+
+Symbol: ODR
+   Definitions
+      At line 9 in file InitIO.s
+   Uses
+      None
+Comment: ODR unused
+RCC 40023800
+
+Symbol: RCC
+   Definitions
+
+
+
+ARM Macro Assembler    Page 3 Alphabetic symbol ordering
+Absolute symbols
+
+      At line 1 in file InitIO.s
+   Uses
+      At line 38 in file InitIO.s
+Comment: RCC used once
+SCB_SHPR3 E000ED20
+
+Symbol: SCB_SHPR3
+   Definitions
+      At line 23 in file InitIO.s
+   Uses
+      At line 32 in file InitIO.s
+Comment: SCB_SHPR3 used once
+SWITCHEN 00000000
+
+Symbol: SWITCHEN
+   Definitions
+      At line 13 in file InitIO.s
+   Uses
+      At line 47 in file InitIO.s
+Comment: SWITCHEN used once
+SYSTICK E000E010
+
+Symbol: SYSTICK
+   Definitions
+      At line 15 in file InitIO.s
+   Uses
+      At line 54 in file InitIO.s
+Comment: SYSTICK used once
+18 symbols
+358 symbols in table

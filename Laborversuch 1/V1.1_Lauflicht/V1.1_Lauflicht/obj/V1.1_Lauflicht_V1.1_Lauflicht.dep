@@ -1,0 +1,4 @@
+Dependencies for Project 'V1.1_Lauflicht', Target 'V1.1_Lauflicht': (DO NOT MODIFY !)
+CompilerVersion: 5060750::V5.06 update 6 (build 750)::ARMCC
+F (.\STM32Init.s)(0x5FAD0D22)(--cpu Cortex-M4.fp.sp --pd "__EVAL SETA 1" -g --apcs=interwork -I.\RTE\_V1.1_Lauflicht-IC:\Users\Christian\AppData\Local\Arm\Packs\Keil\STM32F4xx_DFP\2.14.0\Drivers\CMSIS\Device\ST\STM32F4xx\Include-IC:\Keil_v5\ARM\CMSIS\Include--pd "__UVISION_VERSION SETA 529" --pd "STM32F446xx SETA 1"--list .\lst\stm32init.lst --xref -o .\obj\stm32init.o --depend .\obj\stm32init.d)
+F (.\main.s)(0x6051EDE9)(--cpu Cortex-M4.fp.sp --pd "__EVAL SETA 1" -g --apcs=interwork -I.\RTE\_V1.1_Lauflicht-IC:\Users\Christian\AppData\Local\Arm\Packs\Keil\STM32F4xx_DFP\2.14.0\Drivers\CMSIS\Device\ST\STM32F4xx\Include-IC:\Keil_v5\ARM\CMSIS\Include--pd "__UVISION_VERSION SETA 529" --pd "STM32F446xx SETA 1"--list .\lst\main.lst --xref -o .\obj\main.o --depend .\obj\main.d)
